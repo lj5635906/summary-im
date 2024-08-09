@@ -12,19 +12,22 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ClientType {
-
+    // 服务端
+    SERVER(-1),
     // 安卓 app
     ANDROID(0),
     // IOS app
     IOS(1),
+    // window
+    window(2),
     // PC 浏览器
-    PC(2),
+    PC(3),
     // 小程序
-    applet(3),
+    APPLET(4),
     // H5
-    WEB(4),
+    H5(5),
     // 通过接口发送
-    REST(5);
+    REST(6);
 
     private final int code;
 

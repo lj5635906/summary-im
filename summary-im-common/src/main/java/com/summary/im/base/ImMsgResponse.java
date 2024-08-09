@@ -15,11 +15,11 @@ import lombok.*;
 public class ImMsgResponse extends ImMsg {
 
     /*** 服务端消息Id */
-    private String msgIdServer;
+    private Long msgIdServer;
 
     @Builder
-    public ImMsgResponse(int msgType, Long teamId, Long fromUserId, Long toUserId, int fromClientType, String msgIdClient, int bodyType, String body, String msgIdServer) {
-        super(msgType, teamId, fromUserId, toUserId, fromClientType, msgIdClient, bodyType, body);
+    public ImMsgResponse(Long chatId, int msgType, Long teamId, Long fromUserId, Long toUserId, int fromClientType, String msgIdClient, int bodyType, String body, Long sendTime, Long msgIdServer) {
+        super(chatId, msgType, teamId, fromUserId, toUserId, fromClientType, msgIdClient, bodyType, body, sendTime);
         this.msgIdServer = msgIdServer;
     }
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * IM 消息体
  *
@@ -13,7 +15,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImMsg {
+public class ImMsg implements Serializable {
+    /*** 聊天id */
+    private Long chatId;
     /*** 消息类型 */
     private int msgType;
     /*** 群聊消息的群id */
@@ -30,5 +34,6 @@ public class ImMsg {
     private int bodyType;
     /*** 消息体 */
     private String body;
-
+    /*** 消息发送时间 */
+    private Long sendTime;
 }

@@ -18,8 +18,8 @@ public class ImMsgRequest extends ImMsg {
     private Integer time;
 
     @Builder
-    public ImMsgRequest(int msgType, Long teamId, Long fromUserId, Long toUserId, int fromClientType, String msgIdClient, int bodyType, String body, Integer time) {
-        super(msgType, teamId, fromUserId, toUserId, fromClientType, msgIdClient, bodyType, body);
+    public ImMsgRequest(Long chatId, int msgType, Long teamId, Long fromUserId, Long toUserId, int fromClientType, String msgIdClient, int bodyType, String body, Long sendTime, Integer time) {
+        super(chatId, msgType, teamId, fromUserId, toUserId, fromClientType, msgIdClient, bodyType, body, sendTime);
         this.time = time;
     }
 }

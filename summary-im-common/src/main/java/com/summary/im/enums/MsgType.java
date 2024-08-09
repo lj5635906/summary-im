@@ -22,6 +22,12 @@ public enum MsgType {
     chat(3),
     // 聊天-服务端应答消息
     chat_answer(4),
+    // 进入某个聊天
+    chat_enter(5),
+    // 退出某个聊天
+    chat_quit(6),
+    // 通知
+    notice(7),
     ;
 
     private final int code;
