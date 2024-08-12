@@ -27,8 +27,7 @@ public enum MsgType {
     // 退出某个聊天
     chat_quit(6),
     // 通知
-    notice(7),
-    ;
+    notice(7);
 
     private final int code;
 

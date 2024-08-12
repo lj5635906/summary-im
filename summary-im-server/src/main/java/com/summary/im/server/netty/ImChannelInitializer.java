@@ -1,8 +1,5 @@
 package com.summary.im.server.netty;
 
-import com.summary.im.server.netty.codec.tcp.MsgDecoder;
-import com.summary.im.server.netty.codec.tcp.MsgEncoder;
-import com.summary.im.server.netty.handler.ImServerSocketChannelHandler;
 import com.summary.im.server.netty.handler.MsgHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -28,10 +25,6 @@ public class ImChannelInitializer extends ChannelInitializer<NioSocketChannel> {
     protected void initChannel(NioSocketChannel channel) throws Exception {
         // 获取管道
         ChannelPipeline pipeline = channel.pipeline();
-        // 添加数据编码解码
-//        pipeline.addLast("decoder", new MsgDecoder());
-//        pipeline.addLast("encoder", new MsgEncoder());
-//        pipeline.addLast("handler", new ImServerSocketChannelHandler(msgHandlerAdapter));
 
         pipeline.addLast(new LoggingHandler(LogLevel.DEBUG));
         pipeline.addLast(new SocketChooseHandler(msgHandlerAdapter));

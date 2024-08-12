@@ -27,11 +27,13 @@ public class ImServer {
     private MsgHandlerAdapter msgHandlerAdapter;
 
     private ChannelFuture channelFuture;
+    private NioEventLoopGroup bossGroup;
+    private NioEventLoopGroup workGroup;
 
     @Async
     public void start() throws InterruptedException {
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-        NioEventLoopGroup workGroup = new NioEventLoopGroup();
+        bossGroup = new NioEventLoopGroup();
+        workGroup = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
@@ -54,6 +56,12 @@ public class ImServer {
             if (channelFuture.channel().isOpen()) {
                 channelFuture.channel().close();
             }
+        }
+        if (workGroup != null) {
+            workGroup.shutdownGracefully();
+        }
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully();
         }
         log.info("im server closed");
     }
