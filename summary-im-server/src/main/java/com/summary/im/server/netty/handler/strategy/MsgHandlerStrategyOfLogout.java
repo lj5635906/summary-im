@@ -3,6 +3,7 @@ package com.summary.im.server.netty.handler.strategy;
 import com.summary.im.base.ImMsgRequest;
 import com.summary.im.base.ImMsgResponse;
 import com.summary.im.enums.MsgType;
+import com.summary.im.server.netty.handler.cache.ImChannelAttribute;
 import com.summary.im.server.netty.handler.cache.UserCtxCacheManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.stereotype.Component;
@@ -23,8 +24,10 @@ public class MsgHandlerStrategyOfLogout implements MsgHandlerStrategy {
     @Override
     public ImMsgResponse doMsgHandler(ImMsgRequest request, ChannelHandlerContext ctx) {
 
-        // 清除 当前缓存的在线用户
-        UserCtxCacheManager.removeUserCtx(request.getFromUserId());
+        Long userId = ctx.channel().attr(ImChannelAttribute.USER_ID).get();
+        if (null != userId) {
+            UserCtxCacheManager.removeUserCtx(userId);
+        }
 
         // 关闭退出登录的通道
         ctx.close();

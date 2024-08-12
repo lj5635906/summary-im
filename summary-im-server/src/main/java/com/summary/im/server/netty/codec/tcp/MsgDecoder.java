@@ -1,7 +1,6 @@
-package com.summary.im.server.netty.codec;
+package com.summary.im.server.netty.codec.tcp;
 
 import com.alibaba.fastjson.JSONObject;
-import com.summary.im.base.ImMsg;
 import com.summary.im.base.ImMsgRequest;
 import com.summary.im.encipher.SimpleEncipher;
 import io.netty.buffer.ByteBuf;

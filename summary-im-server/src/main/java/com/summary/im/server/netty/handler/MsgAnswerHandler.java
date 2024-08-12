@@ -26,11 +26,11 @@ public class MsgAnswerHandler {
 
         if (ctx.channel().isActive()) {
             ctx.writeAndFlush(response).addListener(future -> {
-                if (future.isSuccess()) {
-                    log.info("send msg success");
-                } else {
-                    log.error("send msg fail:{}", future.cause().getMessage());
-                }
+//                if (future.isSuccess()) {
+//                    log.info("send msg success");
+//                } else {
+//                    log.error("send msg fail:{}", future.cause().getMessage());
+//                }
             });
         } else {
             log.error("channel is not active");

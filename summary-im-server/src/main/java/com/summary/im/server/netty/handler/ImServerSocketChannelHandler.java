@@ -2,7 +2,6 @@ package com.summary.im.server.netty.handler;
 
 import com.summary.im.base.ImMsgRequest;
 import com.summary.im.base.ImMsgResponse;
-import com.summary.im.enums.MsgType;
 import com.summary.im.server.netty.handler.cache.ImChannelAttribute;
 import com.summary.im.server.netty.handler.cache.UserCtxCacheManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,11 +15,11 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2024/8/6
  */
 @Slf4j
-public class ImServerMsgChannelHandler extends ChannelInboundHandlerAdapter {
+public class ImServerSocketChannelHandler extends ChannelInboundHandlerAdapter {
 
     private final MsgHandlerAdapter msgHandlerAdapter;
 
-    public ImServerMsgChannelHandler(MsgHandlerAdapter msgHandlerAdapter) {
+    public ImServerSocketChannelHandler(MsgHandlerAdapter msgHandlerAdapter) {
         this.msgHandlerAdapter = msgHandlerAdapter;
     }
 
@@ -32,7 +31,7 @@ public class ImServerMsgChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.debug("关闭一个连接");
+        log.debug("关闭一个连接 channelId:{}", ctx.channel().id());
         Long userId = ctx.channel().attr(ImChannelAttribute.USER_ID).get();
         if (null != userId) {
             UserCtxCacheManager.removeUserCtx(userId);
@@ -55,11 +54,14 @@ public class ImServerMsgChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("连接出现异常");
+        log.error("连接出现异常,关闭连接 channelId:{}", ctx.channel().id());
         Long userId = ctx.channel().attr(ImChannelAttribute.USER_ID).get();
         if (null != userId) {
             UserCtxCacheManager.removeUserCtx(userId);
         }
-        super.exceptionCaught(ctx, cause);
+        // 异常 pipeline 上的链表 handler
+        // 不在调用 channelInactive
+        ctx.pipeline().remove(this);
+        ctx.channel().close();
     }
 }

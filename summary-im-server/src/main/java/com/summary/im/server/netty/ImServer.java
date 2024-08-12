@@ -1,15 +1,11 @@
 package com.summary.im.server.netty;
 
 import com.summary.im.server.config.ImProperties;
-import com.summary.im.server.netty.codec.MsgDecoder;
-import com.summary.im.server.netty.codec.MsgEncoder;
-import com.summary.im.server.netty.handler.ImServerMsgChannelHandler;
 import com.summary.im.server.netty.handler.MsgHandlerAdapter;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,18 +35,7 @@ public class ImServer {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel channel) throws Exception {
-                        // 获取管道
-                        ChannelPipeline pipeline = channel.pipeline();
-                        // 添加数据编码解码
-                        pipeline.addLast(new MsgDecoder());
-                        pipeline.addLast(new MsgEncoder());
-                        // 添加 RpcProviderHandler
-                        pipeline.addLast(new ImServerMsgChannelHandler(msgHandlerAdapter));
-                    }
-                })
+                .childHandler(new ImChannelInitializer(msgHandlerAdapter))
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);

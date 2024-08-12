@@ -50,29 +50,34 @@ public class PersonChatHandler {
         if (null != toUserCtx) {
             // 对方在线
             Long userCurrentChat = UserCtxCacheManager.getUserCurrentChat(request.getToUserId());
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
+
+            // 构建消息传输对象
+            ImMsgResponse response = ImMsgResponse.builder()
+                    .chatId(request.getChatId())
+                    .fromUserId(request.getFromUserId())
+                    .toUserId(request.getToUserId())
+                    .bodyType(request.getBodyType())
+                    .body(request.getBody())
+                    .msgIdClient(request.getMsgIdClient())
+                    .msgIdServer(msgId)
+                    .sendTime(now.toInstant(ZoneOffset.of("+8")).toEpochMilli())
+                    .build();
             if (userCurrentChat != null && userCurrentChat.equals(request.getChatId())) {
                 // 对方正在当前聊天
                 // 消息已读标识 设置为已读
                 personMsg.setReadFlag(true);
-                LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
-
-                // 构建消息传输对象
-                ImMsgResponse response = ImMsgResponse.builder()
-                        .chatId(request.getChatId())
-                        .msgType(MsgType.chat.getCode())
-                        .fromUserId(request.getFromUserId())
-                        .toUserId(request.getToUserId())
-                        .bodyType(request.getBodyType())
-                        .body(request.getBody())
-                        .msgIdClient(request.getMsgIdClient())
-                        .msgIdServer(msgId)
-                        .sendTime(now.toInstant(ZoneOffset.of("+8")).toEpochMilli())
-                        .build();
-
-                // 发送消息
-                MsgAnswerHandler.answer(response, toUserCtx);
+                // 消息类型为聊天消息
+                response.setMsgType(MsgType.chat.getCode());
+            } else {
+                // 对方不在当前聊天
+                // 消息已读标识 设置为未读
+                personMsg.setReadFlag(false);
+                // 消息类型为通知消息 通知有人给他发消息
+                response.setMsgType(MsgType.notice.getCode());
             }
-
+            // 发送消息
+            MsgAnswerHandler.answer(response, toUserCtx);
         } else {
             // 对方离线
             // 消息已读标识 设置为未读

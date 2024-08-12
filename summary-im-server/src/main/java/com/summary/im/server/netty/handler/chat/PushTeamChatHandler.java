@@ -55,17 +55,11 @@ public class PushTeamChatHandler {
             ChannelHandlerContext toUserCtx = UserCtxCacheManager.getUserCtx(toUserId);
             if (toUserCtx != null) {
                 // 检测成员在线
-                Long userCurrentChat = UserCtxCacheManager.getUserCurrentChat(toUserId);
-                if (userCurrentChat != null && userCurrentChat.equals(chatId)) {
-                    // 对方正在当前聊天
-                    // 消息已读标识 设置为已读
-                    readFlag = true;
-                }
                 ImMsgResponse response = ImMsgResponse.builder()
                         .msgIdServer(teamMsg.getTeamMsgId())
                         .chatId(chatId)
                         .teamId(teamId)
-                        .msgType(MsgType.notice.getCode())
+                        .msgType(teamMsg.getMsgType())
                         .fromClientType(ClientType.SERVER.getCode())
                         .fromUserId(fromUserId)
                         .toUserId(toUserId)
@@ -73,6 +67,19 @@ public class PushTeamChatHandler {
                         .body(body)
                         .sendTime(sendTime)
                         .build();
+
+                Long userCurrentChat = UserCtxCacheManager.getUserCurrentChat(toUserId);
+                if (userCurrentChat != null && userCurrentChat.equals(chatId)) {
+                    // 对方正在当前聊天
+                    // 消息已读标识 设置为已读
+                    readFlag = true;
+                    // 消息类型为聊天消息
+                    response.setMsgType(MsgType.chat.getCode());
+                }else {
+                    // 对方不在当前聊天
+                    // 消息类型为通知消息 通知有人给他发消息
+                    response.setMsgType(MsgType.notice.getCode());
+                }
 
                 // 用户在线 推送消息
                 MsgAnswerHandler.answer(response, toUserCtx);
@@ -117,13 +124,6 @@ public class PushTeamChatHandler {
                 ChannelHandlerContext toUserCtx = UserCtxCacheManager.getUserCtx(chat.getFromUserId());
                 if (toUserCtx != null) {
                     // 检测成员在线
-                    Long userCurrentChat = UserCtxCacheManager.getUserCurrentChat(chat.getFromUserId());
-                    if (userCurrentChat != null && userCurrentChat.equals(chat.getChatId())) {
-                        // 对方正在当前聊天
-                        // 消息已读标识 设置为已读
-                        readFlag = true;
-                        readNum++;
-                    }
                     ImMsgResponse response = ImMsgResponse.builder()
                             .msgIdServer(teamMsg.getTeamMsgId())
                             .chatId(chat.getChatId())
@@ -136,6 +136,20 @@ public class PushTeamChatHandler {
                             .body(teamMsg.getBody())
                             .sendTime(now.toInstant(ZoneOffset.of("+8")).toEpochMilli())
                             .build();
+
+                    Long userCurrentChat = UserCtxCacheManager.getUserCurrentChat(chat.getFromUserId());
+                    if (userCurrentChat != null && userCurrentChat.equals(chat.getChatId())) {
+                        // 对方正在当前聊天
+                        // 消息已读标识 设置为已读
+                        readFlag = true;
+                        readNum++;
+                    }else {
+                        // 对方不在当前聊天
+                        // 消息已读标识 设置为未读
+                        readFlag = true;
+                        // 消息类型为通知消息 通知有人给他发消息
+                        response.setMsgType(MsgType.notice.getCode());
+                    }
 
                     // 用户在线 推送消息
                     MsgAnswerHandler.answer(response, toUserCtx);

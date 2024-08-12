@@ -1,4 +1,4 @@
-package com.summary.im.server.netty.codec;
+package com.summary.im.server.netty.codec.tcp;
 
 import com.alibaba.fastjson.JSON;
 import com.summary.im.base.ImMsgResponse;
