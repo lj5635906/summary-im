@@ -9,11 +9,13 @@ package com.summary.im.encipher;
 public class SimpleEncipher implements Encipher {
     @Override
     public byte[] encipher(byte[] data) {
+        // TODO 数据加密算法
         return data;
     }
 
     @Override
     public byte[] decipher(byte[] data) {
+        // TODO 数据解密算法
         return data;
     }
 }

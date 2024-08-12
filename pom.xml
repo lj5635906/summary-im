@@ -11,6 +11,7 @@
     <modules>
         <module>summary-im-common</module>
         <module>summary-im-server</module>
+        <module>summary-im-client</module>
     </modules>
 
     <parent>
